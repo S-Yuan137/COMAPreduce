@@ -24,9 +24,10 @@ if __name__ == "__main__":
         cutoff_str = '4e_3'
 
     ### *** Notice *** need to modify the names in the parameters file to match coresponding values
-    fout2 = open(f'FileLists/{source}_level2_{cutoff_str}.list','w')
-    fout1 = open(f'FileLists/{source}_level1_{cutoff_str}.list','w')
-    fout3 = open(f'FileLists/{source}_level2_rejected_{cutoff_str}.list','w')
+    ### SY is the splitting tag to extract the cutoff in the run_destriper.py
+    fout2 = open(f'FileLists/{source}_level2SY{cutoff_str}.list','w')
+    fout1 = open(f'FileLists/{source}_level1SY{cutoff_str}.list','w')
+    fout3 = open(f'FileLists/{source}_level2_rejectedSY{cutoff_str}.list','w')
 
     for ifile,f in enumerate(tqdm(filelist[:])):
         try:
