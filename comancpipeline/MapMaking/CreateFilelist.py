@@ -13,11 +13,20 @@ if __name__ == "__main__":
     datadir = '/scratch/nas_comap2/sharper/COMAP/level2/BW16/'
     filelist = np.sort(glob.glob(datadir+'/*.hd5'))
     source = sys.argv[1]
+    cutoff_str = sys.argv[2]
+    ### this is for inputting the cutoff manually
+    try:
+        cutoff = float(cutoff_str)
+        cutoff_str = cutoff_str.replace('-','_')
+    except:
+        print('cutoff value input is invalid and take default value 4e-3')
+        cutoff = 4e-3 # K default cutoff is 4e-3
+        cutoff_str = '4e_3'
 
-    cutoff = 4e-3 # K
-    fout2 = open(f'FileLists/{source}_level2.list','w')
-    fout1 = open(f'FileLists/{source}_level1.list','w')
-    fout3 = open(f'FileLists/{source}_level2_rejected.list','w')
+    ### *** Notice *** need to modify the names in the parameters file to match coresponding values
+    fout2 = open(f'FileLists/{source}_level2_{cutoff_str}.list','w')
+    fout1 = open(f'FileLists/{source}_level1_{cutoff_str}.list','w')
+    fout3 = open(f'FileLists/{source}_level2_rejected_{cutoff_str}.list','w')
 
     for ifile,f in enumerate(tqdm(filelist[:])):
         try:
@@ -49,7 +58,7 @@ if __name__ == "__main__":
             fnoise = stats['fnoise_fits'][...]
             wnoise = stats['wnoise_auto'][...]
             try:
-                sig_f = wnoise[0,...,0,0]**2 * (1. + (1./fnoise[0,...,0,0])**fnoise[0,...,0,1])
+                sig_f = fnoise[0,...,0,0]**2 * (1. + (1./fnoise[0,...,0,1])**fnoise[0,...,0,2])
             except IndexError:
                 continue
             if np.nanmedian(sig_f) < cutoff:
