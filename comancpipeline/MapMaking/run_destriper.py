@@ -56,7 +56,8 @@ def level1_destripe(filename,options):
     filelist = np.loadtxt(parameters['Inputs']['filelist'],dtype=str,ndmin=1)
 
     # extract the cutoff
-    cutoff_str = filelist.split('SY',1)[1][:-5]
+    cutoff_str = parameters['Inputs']['filelist'].split('SY',1)[1][:-5]
+    cutoff_str = cutoff_str.replace('_','-')
     cutoff = float(cutoff_str)
 
 
