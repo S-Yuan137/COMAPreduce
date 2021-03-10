@@ -5,7 +5,7 @@ from matplotlib.patches import Ellipse
 from scipy.interpolate import interp1d
 from astropy.io import fits
 from astropy import wcs
-
+from astropy.table import Table
 import h5py
 
 from tqdm import tqdm 
@@ -55,6 +55,11 @@ def level1_destripe(filename,options):
         parameters['Inputs']['feeds'] = [parameters['Inputs']['feeds']]
     filelist = np.loadtxt(parameters['Inputs']['filelist'],dtype=str,ndmin=1)
 
+    # extract the cutoff
+    cutoff_str = filelist.split('SY',1)[1][:-5]
+    cutoff = float(cutoff_str)
+
+
     data = DataReader.ReadDataLevel2(filelist,parameters,**parameters['ReadData'])
     offsetMap, offsets = Destriper.Destriper(parameters, data)
 
@@ -81,8 +86,14 @@ def level1_destripe(filename,options):
     cov = fits.ImageHDU(variance,name='Covariance',header=data.naive.wcs.to_header())
     hits = fits.ImageHDU(hits,name='Hits',header=data.naive.wcs.to_header())
     naive = fits.ImageHDU(naive,name='Naive',header=data.naive.wcs.to_header())
+    ## add the parameters into the fits file
+    c1 = fits.Column(name='cutoff', array=np.array([cutoff]), format='D', unit='K')
+    c2 = fits.Column(name='feeds', array=np.array(parameters['Inputs']['feeds']), format='K')
+    c3 = fits.Column(name='iband', array=np.array([int(parameters['ReadData']['iband'])]), format='K')
+    c4 = fits.Column(name='threshold', array=np.array([parameters['Destriper']['threshold']]),format='D')
+    para_table = fits.BinTableHDU.from_columns([c1, c2, c3, c4])                    
 
-    hdul = fits.HDUList([hdu,cov,hits,naive])
+    hdul = fits.HDUList([hdu,cov,hits,naive,para_table])
     if not os.path.exists(parameters['Inputs']['maps_directory']):
         os.makedirs(parameters['Inputs']['maps_directory'])
     fname = '{}/{}_Feeds{}_Band{}.fits'.format(parameters['Inputs']['maps_directory'],
