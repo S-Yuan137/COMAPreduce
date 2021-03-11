@@ -92,7 +92,7 @@ def level1_destripe(filename,options):
     c2 = fits.Column(name='feeds', array=np.array(parameters['Inputs']['feeds']), format='K')
     c3 = fits.Column(name='iband', array=np.array([int(parameters['ReadData']['iband'])]), format='K')
     c4 = fits.Column(name='threshold', array=np.array([parameters['Destriper']['threshold']]),format='D')
-    para_table = fits.BinTableHDU.from_columns([c1, c2, c3, c4])                    
+    para_table = fits.BinTableHDU.from_columns([c1, c2, c3, c4], name='Para')                    
 
     hdul = fits.HDUList([hdu,cov,hits,naive,para_table])
     if not os.path.exists(parameters['Inputs']['maps_directory']):
