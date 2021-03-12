@@ -20,7 +20,7 @@ if __name__ == "__main__":
         cutoff_str = cutoff_str.replace('-','_')
     except:
         print('cutoff value input is invalid and take default value 4e-3')
-        cutoff = 4e-3 # K default cutoff is 4e-3
+        cutoff = 4e-3 # K^2 default cutoff is 4e-3
         cutoff_str = '4e_3'
 
     ### *** Notice *** need to modify the names in the parameters file to match coresponding values
